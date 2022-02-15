@@ -1,0 +1,24 @@
+[submodule "gcc"]
+	path = gcc
+	url = https://github.com/gcc-mirror/gcc.git
+	branch = trunk
+[submodule "binutils-gdb"]
+	path = binutils
+	url = https://github.com/bminor/binutils-gdb.git
+	branch = binutils-2_40-branch
+[submodule "newlib-cygwin"]
+	path = newlib
+	url = https://github.com/bminor/newlib.git
+	branch = newlib-4.3.0
+[submodule "glibc"]
+	path = glibc
+	url = https://github.com/bminor/glibc.git
+# [submodule "gmp"]
+# 	path = gmp
+# 	url = https://gitlab.com/lhtin-rivai/gmp.git
+# [submodule "mpc"]
+# 	path = mpc
+# 	url = https://gitlab.com/lhtin-rivai/mpc.git
+# [submodule "mpfr"]
+# 	path = mpfr
+# 	url = https://gitlab.com/lhtin-rivai/mpfr.git
