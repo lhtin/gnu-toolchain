@@ -2,6 +2,10 @@
 	path = gcc
 	url = https://github.com/gcc-mirror/gcc.git
 	branch = trunk
+[submodule "golden-gcc"]
+	path = golden-gcc
+	url = https://github.com/gcc-mirror/gcc.git
+	branch = trunk
 [submodule "binutils-gdb"]
 	path = binutils
 	url = https://github.com/bminor/binutils-gdb.git

@@ -49,13 +49,10 @@ build-test-gcc:
 build-test-golden-gcc:
 	$(MAKE) -f native.mk DATE=golden-gcc GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
 
-golden-gcc:
-	cp -rf gcc golden-gcc
-
-update-gcc: golden-gcc
+update-gcc:
 	cd gcc && git pull origin trunk
 
-update-golden-gcc: golden-gcc update-gcc
+update-golden-gcc: update-gcc
 	cd golden-gcc && git pull origin trunk
 
 update-to-trunk: update-golden-gcc
