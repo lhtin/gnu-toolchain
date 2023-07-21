@@ -34,13 +34,12 @@ build-gcc: build-binutils clean
 	cd build/$@ && ../../gcc/configure \
 		--prefix=$(PREFIX) \
 		--disable-bootstrap \
-		--disable-multilib \
-		--with-sysroot=$(PREFIX)/$(TARGET) \
+		--disable-multilib
 	$(MAKE) -C build/$@
 	$(MAKE) -C build/$@ install
 
 clean:
-	rm -rf build
+	rm -rf build/build-binutils build/build-gdb build/build-gcc
 	rm -rf output
 
 

@@ -42,4 +42,4 @@ $(BUILD_DIR)/build-test-gcc: prefix
 	$(MAKE) -C $@
 	$(MAKE) -C $@ install
 	echo "Build Success."
-	-$(MAKE) -C $@/build-gcc check
+	-$(MAKE) -C $@ check

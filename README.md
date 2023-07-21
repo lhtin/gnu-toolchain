@@ -1,8 +1,10 @@
 # bootstrap and test on x86
 
-1. `make update-to-trunk` 将gcc和golden-gcc更新到最新的trunk
-2. `cd gcc && git am /path/to/patch` 将需要测试的patch apply上去
-3. `make test` 构建test版本gcc和golden版本的gcc并跑测试，然后对比测试结果
+1. `git clone --recurse-submodules -j4 https://github.com/lhtin/gnu-toolchain.git` Clone代码
+2. `cd gnu-toolchain` 进入仓库
+3. `make update-to-trunk` 将gcc和golden-gcc更新到最新的trunk
+4. `cd gcc && git am /path/to/patch` 将需要测试的patch apply上去
+5. `make test` 构建test版本gcc和golden版本的gcc并跑测试，然后对比测试结果
 
 # build and test on AArch64
 
