@@ -46,7 +46,7 @@ clean:
 build-test-gcc:
 	$(MAKE) -f native.mk DATE=gcc build-test
 
-build-test-golden-gcc:
+build-test-golden-gcc: build-test-gcc
 	$(MAKE) -f native.mk DATE=golden-gcc GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
 
 update-gcc:
