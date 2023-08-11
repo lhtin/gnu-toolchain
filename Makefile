@@ -58,4 +58,4 @@ update-golden-gcc: update-gcc
 update-to-trunk: update-golden-gcc
 
 test: build-test-gcc build-test-golden-gcc
-	./check.py --golden_dir build/build-native-golden-gcc/build-test-gcc/gcc/testsuite --test_dir build/build-native-gcc/build-test-gcc/gcc/testsuite
+	python3 ./check.py --golden_dir build/build-native-golden-gcc/build-test-gcc/gcc/testsuite --test_dir build/build-native-gcc/build-test-gcc/gcc/testsuite
