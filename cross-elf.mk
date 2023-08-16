@@ -1,24 +1,12 @@
 ROOT_DIR := $(shell pwd)
-LINUX_HEADERS_SRC_DIR := $(ROOT_DIR)/linux-headers/include
 BINUTILS_SRC_DIR=$(ROOT_DIR)/binutils
-GCC_SRC_DIR=$(ROOT_DIR)/gcc
+GCC_SRC_DIR?=$(ROOT_DIR)/gcc
 NEWLIB_SRC_DIR=$(ROOT_DIR)/newlib
+DEJAGNU_SRC_DIR=$(ROOT_DIR)/dejagnu
+QEMU_SRC_DIR=$(ROOT_DIR)/qemu
 
-ifeq ($(ARCH), arm)
-	TARGET=arm-unknown-elf
-	WIDTH_ARCH=armv8.6-a
-else ifeq ($(ARCH), aarch64)
-	TARGET=aarch64-unknown-elf
-	WIDTH_ARCH=armv8.2-a+sve
-else
-  ifeq ($(XLEN), 32)
-		TARGET=riscv32-unknown-elf
-		WIDTH_ARCH=rv32gc_zicsr_zifencei
-  else
-		TARGET=riscv64-unknown-elf
-		WIDTH_ARCH=rv64gc_zicsr_zifencei
-  endif
-endif
+TARGET=aarch64-unknown-elf
+WIDTH_ARCH=armv8.2-a+sve
 
 ifndef DATE
 	DATE := $(shell date +%Y_%m_%d_%H_%M_%S)
@@ -27,11 +15,16 @@ endif
 BUILD_DIR := $(shell pwd)/build/build-$(TARGET)-$(DATE)
 PREFIX := $(BUILD_DIR)/output
 
+SIM_PATH?=$(ROOT_DIR)/scripts/wrapper/qemu
+SIM_PREPARE?=PATH="$(SIM_PATH):$(PREFIX)/bin:$(PATH)"
 export PATH := $(PREFIX)/bin:$(PATH)
+
+build-test: test
 
 all: $(BUILD_DIR)/build-gcc-stage2
 
 prefix:
+	rm -rf $(BUILD_DIR)
 	mkdir -p $(PREFIX)
 
 $(BUILD_DIR)/build-binutils: prefix
@@ -125,3 +118,23 @@ $(BUILD_DIR)/build-gcc-stage2: $(BUILD_DIR)/build-newlib
 	$(MAKE) -C $@
 	$(MAKE) -C $@ install
 	echo "Build Success."
+
+$(BUILD_DIR)/build-dejagnu: prefix
+	mkdir $@
+	cd $@ && $(DEJAGNU_SRC_DIR)/configure \
+	prefix=$(PREFIX)
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
+
+$(BUILD_DIR)/build-qemu: prefix
+	mkdir $@
+	cd $@ && $(QEMU_SRC_DIR)/configure \
+		--prefix=$(PREFIX) \
+		--target-list=aarch64-linux-user \
+		--interp-prefix=$(PREFIX)/sysroot \
+		--python=python3
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
+
+test: $(BUILD_DIR)/build-gcc-stage2 $(BUILD_DIR)/build-dejagnu $(BUILD_DIR)/build-qemu
+	$(SIM_PREPARE) $(MAKE) -C $(BUILD_DIR)/build-gcc-stage2 check-gcc RUNTESTFLAGS="--target_board=aarch64-sim"

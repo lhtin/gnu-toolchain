@@ -2,26 +2,14 @@ ROOT_DIR := $(shell pwd)
 BINUTILS_SRC_DIR=$(ROOT_DIR)/binutils
 GCC_SRC_DIR=$(ROOT_DIR)/gcc
 GLIBC_SRC_DIR=$(ROOT_DIR)/glibc
+DEJAGNU_SRC_DIR=$(ROOT_DIR)/dejagnu
+QEMU_SRC_DIR=$(ROOT_DIR)/qemu
+LINUX_HEADERS_SRC_DIR := $(ROOT_DIR)/linux-headers-aarch64/include
+TARGET=aarch64-unknown-linux-gnu
+WIDTH_ARCH=armv8.2-a+sve
 
 ifndef DATE
 	DATE := $(shell date +%Y_%m_%d_%H_%M_%S)
-endif
-
-ifeq ($(ARCH), aarch64)
-	TARGET=aarch64-unknown-linux-gnu
-	WIDTH_ARCH=armv8.2-a+sve
-	LINUX_HEADERS_SRC_DIR := $(ROOT_DIR)/linux-headers-aarch64/include
-else
-	ifeq ($(XLEN), 32)
-		TARGET=riscv32-unknown-linux-gnu
-		WIDTH_ARCH=rv32imafdc
-		WIDTH_ABI=ilp32d
-	else
-		TARGET=riscv64-unknown-linux-gnu
-		WIDTH_ARCH=rv64imafdc
-		WIDTH_ABI=lp64d
-	endif
-	LINUX_HEADERS_SRC_DIR := $(ROOT_DIR)/linux-headers-riscv/include
 endif
 
 BUILD_DIR := $(ROOT_DIR)/build/build-$(TARGET)-$(DATE)
@@ -30,11 +18,7 @@ SYSROOT := $(PREFIX)/sysroot
 
 export PATH := $(PREFIX)/bin:$(PATH)
 
-ifndef ENABLE_MULTILIB
-	MULTILIB=--disable-multilib
-else
-	MULTILIB=--enable-multilib
-endif
+build-test: test
 
 all: $(BUILD_DIR)/build-gcc-stage2
 
@@ -156,3 +140,23 @@ $(BUILD_DIR)/build-gcc-stage2: $(BUILD_DIR)/build-glibc $(BUILD_DIR)/build-glibc
 	$(MAKE) -C $@ install
 	cp -a $(PREFIX)/$(TARGET)/lib* $(SYSROOT)
 	echo "Build Success."
+
+$(BUILD_DIR)/build-dejagnu: prefix
+	mkdir $@
+	cd $@ && $(DEJAGNU_SRC_DIR)/configure \
+	prefix=$(PREFIX)
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
+
+$(BUILD_DIR)/build-qemu: prefix
+	mkdir $@
+	cd $@ && $(QEMU_SRC_DIR)/configure \
+		--prefix=$(PREFIX) \
+		--target-list=aarch64-linux-user \
+		--interp-prefix=$(PREFIX)/sysroot \
+		--python=python3
+	$(MAKE) -C $@
+	$(MAKE) -C $@ install
+
+test: 
+	$(SIM_PREPARE) $(MAKE) -C $(BUILD_DIR)/build-gcc-stage2 check-gcc RUNTESTFLAGS="--target_board=aarch64-sim aarch64.exp=abd_run_1.c"

@@ -42,13 +42,6 @@ clean:
 	rm -rf build/build-binutils build/build-gdb build/build-gcc
 	rm -rf output
 
-
-build-test-gcc:
-	$(MAKE) -f native.mk DATE=gcc build-test
-
-build-test-golden-gcc: build-test-gcc
-	$(MAKE) -f native.mk DATE=golden-gcc GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
-
 update-gcc:
 	cd gcc && git pull origin trunk
 
@@ -57,5 +50,20 @@ update-golden-gcc: update-gcc
 
 update-to-trunk: update-golden-gcc
 
-test: build-test-gcc build-test-golden-gcc
-	python3 ./check.py --golden_dir build/build-native-golden-gcc/build-test-gcc/gcc/testsuite --test_dir build/build-native-gcc/build-test-gcc/gcc/testsuite
+build-test-gcc-x86:
+	$(MAKE) -f native.mk DATE=gcc-x86 build-test
+
+build-test-golden-gcc-x86: build-test-gcc-x86
+	$(MAKE) -f native.mk DATE=golden-gcc-x86 GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
+
+test-x86: build-test-gcc-x86 build-test-golden-gcc-x86
+	python3 ./check.py --golden_dir build/build-native-golden-gcc-x86/build-test-gcc/gcc/testsuite --test_dir build/build-native-gcc-x86/build-test-gcc/gcc/testsuite
+
+build-test-gcc-aarch64:
+	$(MAKE) -f cross-elf.mk DATE=gcc-aarch64 build-test
+
+build-test-golden-gcc-aarch64: build-test-gcc-aarch64
+	$(MAKE) -f cross-elf.mk DATE=golden-gcc-aarch64 GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
+
+test-aarch64: build-test-gcc-aarch64 build-test-golden-gcc-aarch64
+	python3 ./check.py --golden_dir build/build-aarch64-unknown-elf-golden-gcc-aarch64/build-gcc-stage2/gcc/testsuite --test_dir build/build-aarch64-unknown-elf-gcc-aarch64/build-gcc-stage2/gcc/testsuite

@@ -17,6 +17,7 @@
 [submodule "glibc"]
 	path = glibc
 	url = https://github.com/bminor/glibc.git
+        branch = glibc-2.37
 # [submodule "gmp"]
 # 	path = gmp
 # 	url = https://gitlab.com/lhtin-rivai/gmp.git
@@ -26,3 +27,10 @@
 # [submodule "mpfr"]
 # 	path = mpfr
 # 	url = https://gitlab.com/lhtin-rivai/mpfr.git
+[submodule "dejagnu"]
+	path = dejagnu
+	url = https://github.com/lhtin/dejagnu.git
+[submodule "qemu"]
+	path = qemu
+	url = https://github.com/qemu/qemu.git
+	branch = v7.1.0
