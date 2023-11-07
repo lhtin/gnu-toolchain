@@ -12,6 +12,8 @@ jobs:
     timeout-minutes: 600
     strategy:
       fail-fast: false
+      matrix:
+        os:     [ubuntu-20.04]
     steps:
       - uses: actions/checkout@v2
       - name: install dependencies
