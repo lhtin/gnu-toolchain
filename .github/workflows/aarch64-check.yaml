@@ -21,4 +21,4 @@ jobs:
       - name: check
         run: |
           git submodule update --init --depth=1 --recursive
-          make test
+          make test-aarch64
