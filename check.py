@@ -1,6 +1,6 @@
 #!python3
 
-import argparse, subprocess, sys
+import argparse, subprocess, sys, os
 
 parser = argparse.ArgumentParser(description='Check gcc testsuite result.')
 parser.add_argument ("--golden_dir", type=str, required=True)
@@ -23,9 +23,13 @@ def run (cmd):
     has_fail = True
 
 for tool in args.tool_list:
-  check_cmd = cmd.format (**{"golden_dir": args.golden_dir, "test_dir": args.test_dir, "tool": tool})
-  print(check_cmd)
-  run(check_cmd)
+  sum_file = f"{args.test_dir}/{tool}/{tool}.sum"
+  if os.path.isfile(sum_file):
+    check_cmd = cmd.format (**{"golden_dir": args.golden_dir, "test_dir": args.test_dir, "tool": tool})
+    print(check_cmd)
+    run(check_cmd)
+  else:
+    print(f"Cannot find summary {sum_file}")
 
 if has_fail:
   print("Finish with FAILED.")
