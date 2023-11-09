@@ -1,4 +1,4 @@
-name: check x86 gcc
+name: check aarch64 gcc
 
 on:
   schedule:
