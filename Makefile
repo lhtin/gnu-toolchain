@@ -56,7 +56,7 @@ build-test-gcc-x86:
 build-test-golden-gcc-x86: build-test-gcc-x86
 	$(MAKE) -f native.mk DATE=golden-gcc-x86 GCC_SRC_DIR=$(ROOT_DIR)/golden-gcc build-test
 
-test-x86: build-test-gcc-x86 build-test-golden-gcc-x86
+test: build-test-gcc-x86 build-test-golden-gcc-x86
 	python3 ./check.py --golden_dir build/build-native-golden-gcc-x86/build-test-gcc/gcc/testsuite --test_dir build/build-native-gcc-x86/build-test-gcc/gcc/testsuite
 
 build-test-gcc-aarch64:
