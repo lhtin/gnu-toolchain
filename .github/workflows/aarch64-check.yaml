@@ -18,4 +18,4 @@ jobs:
       - name: check
         run: |
           git submodule update --init --depth=1 --recursive
-          make test-aarch64
+          make test-aarch64 -j
